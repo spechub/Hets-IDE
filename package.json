@@ -1,0 +1,61 @@
+{
+	"name": "hets-ide",
+	"displayName": "Hets IDE",
+	"description": "",
+	"version": "0.0.1",
+	"engines": {
+		"vscode": "^1.32.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onCommand:hets-ide.showGraph"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "hets-ide.showGraph",
+				"title": "Hets IDE: Show Graph"
+			},
+			{
+				"command": "hets-ide.loadFile",
+				"title": "Hets IDE: Load open File"
+			}
+		]
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./ && webpack --mode development",
+		"webpack": "webpack --mode development",
+		"watch": "tsc -watch -p ./",
+		"webpack-dev": "webpack --mode development --watch",
+		"postinstall": "node ./node_modules/vscode/bin/install",
+		"test": "npm run compile && node ./node_modules/vscode/bin/test"
+	},
+	"devDependencies": {
+		"@types/d3": "^4.13.0",
+		"@types/dagre-d3": "^0.4.37",
+		"@types/mocha": "^2.2.42",
+		"@types/node": "^10.12.21",
+		"@types/react": "^16.3.14",
+		"@types/react-dom": "^16.0.5",
+		"@types/react-redux": "^6.0.0",
+		"ts-loader": "^5.4.3",
+		"tslint": "^5.12.1",
+		"typescript": "^3.3.1",
+		"vscode": "^1.1.28",
+		"webpack": "^4.30.0",
+		"webpack-cli": "^3.3.1"
+	},
+	"dependencies": {
+		"d3": "^4.13.0",
+		"dagre": "^0.8.2",
+		"dagre-d3": "^0.6.1",
+		"react-redux": "^5.0.7",
+		"redux": "^4.0.0",
+		"react": "^16.3.2",
+		"react-dom": "^16.3.2"
+	}
+}
