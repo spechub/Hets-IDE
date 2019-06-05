@@ -3,6 +3,7 @@ import * as path from "path";
 
 import { Utils } from "./utils";
 import { URLType } from "./Types";
+import { configure } from "vscode/lib/testrunner";
 
 export function activate(context: vscode.ExtensionContext) {
   let panel: vscode.WebviewPanel;
@@ -57,9 +58,11 @@ export function activate(context: vscode.ExtensionContext) {
           filename = path.basename(resource.fsPath);
         }
 
+        const config = vscode.workspace.getConfiguration("hets-ide");
+
         Utils.queryHETSApi(
-          "localhost",
-          8000,
+          config.get("server.hostname", "localhost"),
+          config.get("server.port", 8000),
           `data/${filename}`,
           URLType.File,
           ""

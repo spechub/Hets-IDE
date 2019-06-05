@@ -23,7 +23,23 @@
 				"command": "hets-ide.loadFile",
 				"title": "Hets IDE: Load open File"
 			}
-		]
+		],
+		"configuration": {
+			"type": "object",
+			"title": "Hets-IDE",
+			"properties": {
+				"hets-ide.server.hostname": {
+					"type": "string",
+					"default": "localhost",
+					"description": "The hostname (or ip address) Hets is running on."
+				},
+				"hets-ide.server.port": {
+					"type": "number",
+					"default": 8000,
+					"description": "The port Hets is listening on."
+				}
+			}
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
