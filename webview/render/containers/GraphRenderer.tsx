@@ -2,6 +2,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { EGraphRenderer, HetsGuiState } from "../reducers/reducer";
 import VisibleDagGraph from "./VisibleDagGraph";
+import { FillScreen } from "../components/FillScreen";
 
 type GraphRendererProps = {
   renderer: EGraphRenderer;
@@ -18,7 +19,9 @@ class GraphRenderer extends React.Component<GraphRendererProps, {}> {
       return <h1>Please open a File!</h1>;
     } else {
       if (this.props.renderer === EGraphRenderer.GRAPHVIZ) {
-        return <VisibleDagGraph width={800} height={600} />;
+        return (
+          <FillScreen children={props => <VisibleDagGraph {...props} />} />
+        );
       }
     }
   }
