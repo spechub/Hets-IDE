@@ -1,9 +1,9 @@
 import * as vscode from "vscode";
 import * as path from "path";
 
-import { Utils } from "./utils";
-import { URLType } from "./Types";
-import { configure } from "vscode/lib/testrunner";
+import { HetsRESTInterface } from "./HetsRESTInterface";
+
+export let selectedNode = null;
 
 export function activate(context: vscode.ExtensionContext) {
   let panel: vscode.WebviewPanel;
@@ -12,7 +12,7 @@ export function activate(context: vscode.ExtensionContext) {
     panel = vscode.window.createWebviewPanel(
       "hets-ide",
       "Development Graph",
-      vscode.ViewColumn.Beside,
+      { preserveFocus: true, viewColumn: vscode.ViewColumn.Beside },
       {
         enableScripts: true,
         localResourceRoots: [
@@ -41,43 +41,138 @@ export function activate(context: vscode.ExtensionContext) {
 			<script src="${scriptUri}"></script>
 		</body>
     </html>`;
+
+    panel.webview.onDidReceiveMessage(
+      message => {
+        switch (message.command) {
+          case "alert":
+            vscode.window.showErrorMessage(message.text);
+            return;
+        }
+      },
+      undefined,
+      context.subscriptions
+    );
   });
 
-  context.subscriptions.push(
-    vscode.commands.registerTextEditorCommand(
-      "hets-ide.loadFile",
-      (textEditor: vscode.TextEditor) => {
-        if (!panel) {
-          return;
-        }
+  let proveCommand = vscode.commands.registerCommand(
+    "hets-ide.prove",
+    async () => {
+      let textEditorPicks: vscode.QuickPickItem[] = [];
+      vscode.window.visibleTextEditors.forEach((editor: vscode.TextEditor) => {
+        textEditorPicks.push({
+          label: path.basename(editor.document.fileName)
+        });
+      });
 
-        let filename: string;
-        const resource = textEditor.document.uri;
+      let selectedEditor = await vscode.window.showQuickPick(textEditorPicks, {
+        canPickMany: false
+      });
 
-        if (resource.scheme === "file") {
-          filename = path.basename(resource.fsPath);
-        }
+      console.log(selectedEditor);
 
-        const config = vscode.workspace.getConfiguration("hets-ide");
-
-        Utils.queryHETSApi(
-          config.get("server.hostname", "localhost"),
-          config.get("server.port", 8000),
-          `data/${filename}`,
-          URLType.File,
-          ""
-        )
-          .then(graph => {
-            panel.webview.postMessage({ graph: graph });
-          })
-          .catch(err => {
-            vscode.window.showErrorMessage(err);
-          });
+      if (!selectedEditor) {
+        return;
       }
-    )
+
+      const config = vscode.workspace.getConfiguration("hets-ide");
+      const hetsInterface = new HetsRESTInterface(
+        config.get("server.hostname", "localhost"),
+        config.get("server.port", 8000)
+      );
+
+      let provers: JSON;
+      try {
+        provers = await hetsInterface.getProvers(
+          `data/${selectedEditor.label}`,
+          null,
+          null
+        );
+      } catch (err) {
+        vscode.window.showErrorMessage(err);
+        return;
+      }
+
+      let proverPicks: vscode.QuickPickItem[] = [];
+      provers["provers"].forEach(prover => {
+        proverPicks.push({
+          label: prover["name"],
+          detail: prover["identifier"]
+        });
+      });
+
+      const proverPick = await vscode.window.showQuickPick(proverPicks, {
+        canPickMany: false
+      });
+
+      console.log(proverPick);
+
+      const proveResponse = hetsInterface.prove(
+        `data/${selectedEditor.label}`,
+        null,
+        "Nat__E1",
+        proverPick.detail
+      );
+
+      console.log(proveResponse);
+    }
+  );
+
+  let loadFileCommand = vscode.commands.registerCommand(
+    "hets-ide.loadFile",
+    async () => {
+      if (!panel) {
+        vscode.commands.executeCommand("hets-ide.showGraph");
+      }
+
+      let textEditorPicks: vscode.QuickPickItem[] = [];
+      vscode.window.visibleTextEditors.forEach((editor: vscode.TextEditor) => {
+        textEditorPicks.push({
+          label: path.basename(editor.document.fileName),
+          detail: editor.document.fileName
+        });
+      });
+
+      let selectedEditor = await vscode.window.showQuickPick(textEditorPicks, {
+        canPickMany: false
+      });
+
+      if (!selectedEditor) {
+        return;
+      }
+
+      const textEditor = vscode.window.visibleTextEditors.find(
+        editor => editor.document.fileName === selectedEditor.detail
+      );
+
+      let filename: string;
+      const resource = textEditor.document.uri;
+
+      if (resource.scheme === "file") {
+        filename = path.basename(resource.fsPath);
+      }
+
+      const config = vscode.workspace.getConfiguration("hets-ide");
+
+      const hetsInterface = new HetsRESTInterface(
+        config.get("server.hostname", "localhost"),
+        config.get("server.port", 8000)
+      );
+
+      hetsInterface
+        .getDecisionGraph(`data/${filename}`, "")
+        .then(graph => {
+          panel.webview.postMessage({ graph: graph });
+        })
+        .catch(err => {
+          vscode.window.showErrorMessage(err);
+        });
+    }
   );
 
   context.subscriptions.push(webview);
+  context.subscriptions.push(proveCommand);
+  context.subscriptions.push(loadFileCommand);
 }
 
 export function deactivate() {}

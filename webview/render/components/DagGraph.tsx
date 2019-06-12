@@ -2,6 +2,12 @@ import * as React from "react";
 import * as d3 from "d3";
 import * as dagreD3 from "dagre-d3";
 
+type VSCodeApiType = {
+  postMessage: ({}) => void;
+};
+
+declare const acquireVsCodeApi: () => VSCodeApiType;
+
 export type DagGraphProps = {
   width: number;
   height: number;
@@ -13,11 +19,13 @@ export type DagGraphProps = {
 export class DagGraph extends React.Component<DagGraphProps, {}> {
   baseSvg: SVGSVGElement;
   scale: { k: number; x: number; y: number };
+  vscode: VSCodeApiType;
 
   constructor(props: DagGraphProps) {
     super(props);
 
     this.scale = { k: 0.75, x: 0, y: 20 };
+    this.vscode = acquireVsCodeApi();
 
     this.displayGraph = this.displayGraph.bind(this);
   }
@@ -52,6 +60,12 @@ export class DagGraph extends React.Component<DagGraphProps, {}> {
 
     g.selectAll("g.node").on("click", (v: string) => {
       // this.props.onSelectNode(graph.node(v));
+      const node = graph.node(v);
+
+      this.vscode.postMessage({
+        command: "alert",
+        text: `${node.label}`
+      });
       d3.event.stopPropagation();
     });
 
