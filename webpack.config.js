@@ -3,12 +3,13 @@
 const path = require("path");
 
 const config = {
-  target: "electron-renderer",
+  target: "node",
 
-  entry: "./webview/render/index.tsx",
+  entry: "./src/extension.ts",
   output: {
-    path: path.resolve(__dirname, "dist", "webview"),
-    filename: "webview.js",
+    path: path.resolve(__dirname, "dist", "extension"),
+    filename: "extension.js",
+    libraryTarget: "commonjs2",
     devtoolModuleFilenameTemplate: "../[resource-path]"
   },
   devtool: "source-map",
@@ -16,19 +17,16 @@ const config = {
     vscode: "commonjs vscode"
   },
   resolve: {
-    extensions: [".ts", ".tsx", ".js"]
+    extensions: [".ts", ".js"]
   },
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
-        include: [path.resolve(__dirname, "webview")],
+        test: /\.ts$/,
+        include: [path.resolve(__dirname, "src")],
         use: [
           {
-            loader: "ts-loader",
-            options: {
-              configFile: "tsconfig.webview.json"
-            }
+            loader: "ts-loader"
           }
         ]
       }

@@ -5,7 +5,11 @@ src/**
 .gitignore
 vsc-extension-quickstart.md
 **/tsconfig.json
+**/tsconfig.webview.json
+**/webpack.config.js
 **/tslint.json
 **/*.map
 **/*.ts
 examples/**
+webview/**
+node_modules

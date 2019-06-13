@@ -1,8 +1,25 @@
 {
 	"name": "hets-ide",
+	"publisher": "spechub",
 	"displayName": "Hets IDE",
-	"description": "",
+	"description": "Hets IDE can display the development graph of an opened specification file.",
 	"version": "0.0.1",
+	"icon": "resources/icon.png",
+	"keywords": [
+		"hets",
+		"dol",
+		"spechub",
+		"casl",
+		"owl"
+	],
+	"bugs": {
+    "url": "https://github.com/spechub/Hets-IDE/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/spechub/Hets-IDE.git"
+	},
+	"homepage": "https://github.com/spechub/Hets-IDE",
 	"engines": {
 		"vscode": "^1.32.0"
 	},
@@ -12,7 +29,7 @@
 	"activationEvents": [
 		"*"
 	],
-	"main": "./out/extension.js",
+	"main": "./dist/extension/extension.js",
 	"contributes": {
 		"commands": [
 			{
@@ -48,10 +65,12 @@
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./ && webpack --mode development",
-		"webpack": "webpack --mode development",
-		"watch": "tsc -watch -p ./",
-		"webpack-dev": "webpack --mode development --watch",
+		"compile": "npm run compile:extension && npm run compile:webview",
+		"compile:extension": "webpack --config webpack.config.js --mode production",
+		"compile:webview": "webpack --config webpack.webview.config.js --mode production",
+		"compile-dev": "npm run compile-dev:extension && npm run compile-dev:webview",
+		"compile-dev:extension": "webpack --config webpack.config.js --mode development",
+		"compile-dev:webview": "webpack --config webpack.webview.config.js --mode development",
 		"postinstall": "node ./node_modules/vscode/bin/install",
 		"test": "npm run compile && node ./node_modules/vscode/bin/test"
 	},
@@ -70,7 +89,8 @@
 		"typescript": "^3.3.1",
 		"vscode": "^1.1.28",
 		"webpack": "^4.30.0",
-		"webpack-cli": "^3.3.1"
+		"webpack-cli": "^3.3.1",
+		"vsce": "^1.63.0"
 	},
 	"dependencies": {
 		"d3": "^4.13.0",
