@@ -59,6 +59,11 @@
 					"type": "number",
 					"default": 5,
 					"description": "The time until proving is stopped in seconds."
+				},
+				"hets-ide.prover.commands": {
+					"type": "string",
+					"default": "auto/full-theories/full-signatures",
+					"description": "Additional commands that can be applied to the graph."
 				}
 			}
 		}

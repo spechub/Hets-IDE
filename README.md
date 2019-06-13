@@ -37,6 +37,11 @@ The timeout (in seconds) for the prover can also be set, default are 5 seconds. 
 * Display the development graph for a selected document.
 * Prove a selected node.
 
+### 0.0.2
+
+* Add settings to configure Hets commands.
+* Add loading indicator when fetching development graph.
+
 ## Development
 
 To create a local development setup clone this repository and run `npm install`.  

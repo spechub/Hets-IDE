@@ -78,7 +78,7 @@ export function activate(context: vscode.ExtensionContext) {
         _progress => {
           return hetsInterface.prove(
             `data/${fileLoadedInPane}`,
-            "/auto/full-theories/full-signatures",
+            config.get("prover.commands", "auto/full-theories/full-signatures"),
             selectedNode,
             proverPick.detail,
             config.get("prover.timeout", 5)
@@ -87,23 +87,27 @@ export function activate(context: vscode.ExtensionContext) {
       );
 
       proverOutputChannel.clear();
-      const proverOutput = proveResponse[0];
-      proverOutputChannel.appendLine(
-        `Prover output for node: ${proverOutput["node"]}`
-      );
 
-      proverOutput["goals"].forEach((goal: JSON, i: number) => {
-        proverOutputChannel.appendLine(`==============================`);
-        proverOutputChannel.appendLine(`========== Output ${i} ==========`);
-        proverOutputChannel.appendLine(`==============================`);
-        proverOutputChannel.appendLine(`Name:\t\t\t\t${goal["name"]}`);
-        proverOutputChannel.appendLine(`Result:\t\t\t\t${goal["result"]}`);
+      if (typeof proveResponse === "string") {
+        proverOutputChannel.append(proveResponse);
+      } else {
+        const proverOutput = proveResponse[0];
         proverOutputChannel.appendLine(
-          `Used Translation:\t${goal["used_translation"]}`
+          `Prover output for node: ${proverOutput["node"]}`
         );
-        proverOutputChannel.appendLine("Prover Output:");
-        proverOutputChannel.append(goal["prover_output"]);
-      });
+        proverOutput["goals"].forEach((goal: JSON, i: number) => {
+          proverOutputChannel.appendLine(`==============================`);
+          proverOutputChannel.appendLine(`========== Output ${i} ==========`);
+          proverOutputChannel.appendLine(`==============================`);
+          proverOutputChannel.appendLine(`Name:\t\t\t\t${goal["name"]}`);
+          proverOutputChannel.appendLine(`Result:\t\t\t\t${goal["result"]}`);
+          proverOutputChannel.appendLine(
+            `Used Translation:\t${goal["used_translation"]}`
+          );
+          proverOutputChannel.appendLine("Prover Output:");
+          proverOutputChannel.append(goal["prover_output"]);
+        });
+      }
       proverOutputChannel.show(true);
     }
   );
@@ -165,17 +169,21 @@ export function activate(context: vscode.ExtensionContext) {
         config.get("server.port", 8000)
       );
 
-      hetsInterface
-        .getDecisionGraph(
-          `data/${filename}`,
-          "/auto/full-theories/full-signatures"
-        )
-        .then(graph => {
-          panel.webview.postMessage({ graph: graph });
-        })
-        .catch(err => {
-          vscode.window.showErrorMessage(err);
-        });
+      const graph = await vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Window,
+          title: `Fetching graph for '${fileLoadedInPane}'!`,
+          cancellable: false
+        },
+        _progress => {
+          return hetsInterface.getDecisionGraph(
+            `data/${filename}`,
+            config.get("prover.commands", "auto/full-theories/full-signatures")
+          );
+        }
+      );
+
+      panel.webview.postMessage({ graph: graph });
     }
   );
 
