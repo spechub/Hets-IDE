@@ -63,7 +63,7 @@ export class DagGraph extends React.Component<DagGraphProps, {}> {
       const node = graph.node(v);
 
       this.vscode.postMessage({
-        command: "alert",
+        command: "node-selected",
         text: `${node.label}`
       });
       d3.event.stopPropagation();

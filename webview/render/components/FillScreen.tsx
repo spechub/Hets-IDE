@@ -18,7 +18,7 @@ export class FillScreen extends React.Component<Props, State> {
     super(props);
 
     this.sizeOffset = {
-      width: 18,
+      width: 20,
       height: 10
     };
 

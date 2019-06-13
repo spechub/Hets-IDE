@@ -17,15 +17,11 @@
 		"commands": [
 			{
 				"command": "hets-ide.loadFile",
-				"title": "Hets IDE: Load open File"
-			},
-			{
-				"command": "hets-ide.showGraph",
-				"title": "Hets IDE: Show Graph"
+				"title": "Hets IDE: Load development graph for File"
 			},
 			{
 				"command": "hets-ide.prove",
-				"title": "Hets IDE: Prove File"
+				"title": "Hets IDE: Prove selected Node"
 			}
 		],
 		"configuration": {
@@ -41,6 +37,11 @@
 					"type": "number",
 					"default": 8000,
 					"description": "The port Hets is listening on."
+				},
+				"hets-ide.prover.timeout": {
+					"type": "number",
+					"default": 5,
+					"description": "The time until proving is stopped in seconds."
 				}
 			}
 		}

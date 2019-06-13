@@ -2,76 +2,32 @@ import * as vscode from "vscode";
 import * as path from "path";
 
 import { HetsRESTInterface } from "./HetsRESTInterface";
-
-export let selectedNode = null;
+import {
+  createWebview,
+  selectedNode,
+  panel,
+  clearSelectedNode
+} from "./WebviewManager";
 
 export function activate(context: vscode.ExtensionContext) {
-  let panel: vscode.WebviewPanel;
+  let fileLoadedInPane: string = null;
 
-  let webview = vscode.commands.registerCommand("hets-ide.showGraph", () => {
-    panel = vscode.window.createWebviewPanel(
-      "hets-ide",
-      "Development Graph",
-      { preserveFocus: true, viewColumn: vscode.ViewColumn.Beside },
-      {
-        enableScripts: true,
-        localResourceRoots: [
-          vscode.Uri.file(path.join(context.extensionPath, "dist"))
-        ]
-      }
-    );
-
-    const scriptPathOnDisk = vscode.Uri.file(
-      path.join(context.extensionPath, "dist", "webview", "webview.js")
-    );
-    const scriptUri = scriptPathOnDisk.with({ scheme: "vscode-resource" });
-
-    panel.webview.html = `<!DOCTYPE html>
-		<html lang="en">
-		<head>
-			<meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-			<base href="${vscode.Uri.file(
-        path.join(context.extensionPath, "dist", "webview")
-      ).with({ scheme: "vscode-resource" })}/">
-		</head>
-		<body>
-			<div id="content"></div>
-			<script src="${scriptUri}"></script>
-		</body>
-    </html>`;
-
-    panel.webview.onDidReceiveMessage(
-      message => {
-        switch (message.command) {
-          case "alert":
-            vscode.window.showErrorMessage(message.text);
-            return;
-        }
-      },
-      undefined,
-      context.subscriptions
-    );
-  });
+  const proverOutputChannel = vscode.window.createOutputChannel(
+    "Hets: Prover Output"
+  );
 
   let proveCommand = vscode.commands.registerCommand(
     "hets-ide.prove",
     async () => {
-      let textEditorPicks: vscode.QuickPickItem[] = [];
-      vscode.window.visibleTextEditors.forEach((editor: vscode.TextEditor) => {
-        textEditorPicks.push({
-          label: path.basename(editor.document.fileName)
-        });
-      });
+      if (!fileLoadedInPane) {
+        vscode.window.showErrorMessage("Please open the development graph");
+        return;
+      }
 
-      let selectedEditor = await vscode.window.showQuickPick(textEditorPicks, {
-        canPickMany: false
-      });
-
-      console.log(selectedEditor);
-
-      if (!selectedEditor) {
+      if (!selectedNode) {
+        vscode.window.showErrorMessage(
+          "Please select a node in the development graph."
+        );
         return;
       }
 
@@ -82,16 +38,20 @@ export function activate(context: vscode.ExtensionContext) {
       );
 
       let provers: JSON;
-      try {
-        provers = await hetsInterface.getProvers(
-          `data/${selectedEditor.label}`,
-          null,
-          null
-        );
-      } catch (err) {
-        vscode.window.showErrorMessage(err);
-        return;
-      }
+      provers = await vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Window,
+          title: `Fetching available provers for node '${selectedNode}'!`,
+          cancellable: false
+        },
+        _progress => {
+          return hetsInterface.getProvers(
+            `data/${fileLoadedInPane}`,
+            null,
+            null
+          );
+        }
+      );
 
       let proverPicks: vscode.QuickPickItem[] = [];
       provers["provers"].forEach(prover => {
@@ -105,45 +65,91 @@ export function activate(context: vscode.ExtensionContext) {
         canPickMany: false
       });
 
-      console.log(proverPick);
+      if (!proverPick) {
+        return;
+      }
 
-      const proveResponse = hetsInterface.prove(
-        `data/${selectedEditor.label}`,
-        null,
-        "Nat__E1",
-        proverPick.detail
+      const proveResponse = await vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Window,
+          title: `Proving '${selectedNode} with prover '${proverPick.label}'!`,
+          cancellable: false
+        },
+        _progress => {
+          return hetsInterface.prove(
+            `data/${fileLoadedInPane}`,
+            "/auto/full-theories/full-signatures",
+            selectedNode,
+            proverPick.detail,
+            config.get("prover.timeout", 5)
+          );
+        }
       );
 
-      console.log(proveResponse);
+      proverOutputChannel.clear();
+      const proverOutput = proveResponse[0];
+      proverOutputChannel.appendLine(
+        `Prover output for node: ${proverOutput["node"]}`
+      );
+
+      proverOutput["goals"].forEach((goal: JSON, i: number) => {
+        proverOutputChannel.appendLine(`==============================`);
+        proverOutputChannel.appendLine(`========== Output ${i} ==========`);
+        proverOutputChannel.appendLine(`==============================`);
+        proverOutputChannel.appendLine(`Name:\t\t\t\t${goal["name"]}`);
+        proverOutputChannel.appendLine(`Result:\t\t\t\t${goal["result"]}`);
+        proverOutputChannel.appendLine(
+          `Used Translation:\t${goal["used_translation"]}`
+        );
+        proverOutputChannel.appendLine("Prover Output:");
+        proverOutputChannel.append(goal["prover_output"]);
+      });
+      proverOutputChannel.show(true);
     }
   );
 
   let loadFileCommand = vscode.commands.registerCommand(
     "hets-ide.loadFile",
     async () => {
+      fileLoadedInPane = null;
+      clearSelectedNode();
+
       if (!panel) {
-        vscode.commands.executeCommand("hets-ide.showGraph");
+        createWebview(context);
       }
 
-      let textEditorPicks: vscode.QuickPickItem[] = [];
-      vscode.window.visibleTextEditors.forEach((editor: vscode.TextEditor) => {
-        textEditorPicks.push({
-          label: path.basename(editor.document.fileName),
-          detail: editor.document.fileName
-        });
-      });
+      let textEditor: vscode.TextEditor = null;
+      if (vscode.window.visibleTextEditors.length > 1) {
+        let textEditorPicks: vscode.QuickPickItem[] = [];
+        vscode.window.visibleTextEditors.forEach(
+          (editor: vscode.TextEditor) => {
+            textEditorPicks.push({
+              label: path.basename(editor.document.fileName),
+              detail: editor.document.fileName
+            });
+          }
+        );
 
-      let selectedEditor = await vscode.window.showQuickPick(textEditorPicks, {
-        canPickMany: false
-      });
+        let selectedEditor = await vscode.window.showQuickPick(
+          textEditorPicks,
+          {
+            canPickMany: false
+          }
+        );
 
-      if (!selectedEditor) {
-        return;
+        if (!selectedEditor) {
+          return;
+        }
+
+        textEditor = vscode.window.visibleTextEditors.find(
+          editor => editor.document.fileName === selectedEditor.detail
+        );
+      } else {
+        textEditor = vscode.window.visibleTextEditors[0];
       }
 
-      const textEditor = vscode.window.visibleTextEditors.find(
-        editor => editor.document.fileName === selectedEditor.detail
-      );
+      fileLoadedInPane = path.basename(textEditor.document.fileName);
+      panel.title = `Development Graph - ${fileLoadedInPane}`;
 
       let filename: string;
       const resource = textEditor.document.uri;
@@ -160,7 +166,10 @@ export function activate(context: vscode.ExtensionContext) {
       );
 
       hetsInterface
-        .getDecisionGraph(`data/${filename}`, "")
+        .getDecisionGraph(
+          `data/${filename}`,
+          "/auto/full-theories/full-signatures"
+        )
         .then(graph => {
           panel.webview.postMessage({ graph: graph });
         })
@@ -170,7 +179,6 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  context.subscriptions.push(webview);
   context.subscriptions.push(proveCommand);
   context.subscriptions.push(loadFileCommand);
 }

@@ -16,7 +16,12 @@ class GraphRenderer extends React.Component<GraphRendererProps, {}> {
 
   render() {
     if (this.props.graph.dgraph === null) {
-      return <h1>Please open a File!</h1>;
+      return (
+        <>
+          <b>No file loaded!</b>
+          <p>Please close this pane and run the command again.</p>
+        </>
+      );
     } else {
       if (this.props.renderer === EGraphRenderer.GRAPHVIZ) {
         return (

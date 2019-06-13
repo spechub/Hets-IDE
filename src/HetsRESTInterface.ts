@@ -91,7 +91,8 @@ export class HetsRESTInterface {
     filepath: string,
     commandList: string | null,
     node: string | null,
-    prover: string | null
+    prover: string | null,
+    timeout: number
   ) {
     const escapedURL = querystring.escape("file:///" + filepath);
     const commandListPart = commandList !== null ? `/${commandList}` : "";
@@ -108,7 +109,7 @@ export class HetsRESTInterface {
           {
             node: node,
             reasonerConfiguration: {
-              timeLimit: 1,
+              timeLimit: timeout,
               reasoner: prover
             }
           }
