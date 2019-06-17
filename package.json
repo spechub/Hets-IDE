@@ -3,7 +3,7 @@
 	"publisher": "spechub",
 	"displayName": "Hets IDE",
 	"description": "Hets IDE can display the development graph of an opened specification file.",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"icon": "resources/icon.png",
 	"keywords": [
 		"hets",
