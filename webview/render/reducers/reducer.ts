@@ -10,7 +10,11 @@ import {
   SHOW_INTERNAL,
   SELECT_EDGE
 } from "../actions/HetsGuiActions";
-import { removeInternalEdges, constructGraph } from "../actions/GraphHelper";
+import {
+  removeInternalEdges,
+  constructGraph,
+  renderSelectedNode
+} from "../actions/GraphHelper";
 import { DGNode, DGLink } from "../../shared/DGraph";
 
 export enum EGraphRenderer {
@@ -50,6 +54,16 @@ export function hetsGui(
   switch (action.type) {
     case SELECT_NODE:
       return Object.assign({}, state, {
+        graph: {
+          dgraph: renderSelectedNode(
+            action.node,
+            action.id,
+            state.graph.nodes,
+            state.graph.edges
+          ),
+          nodes: state.graph.nodes,
+          edges: state.graph.edges
+        },
         selectedNode: action.node
       });
     case SELECT_EDGE:

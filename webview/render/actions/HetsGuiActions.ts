@@ -14,6 +14,7 @@ export interface HetsGuiActions extends Action {
   edge?: dagreD3.GraphEdge;
   renderer?: EGraphRenderer;
   size?: { width: number; height: number };
+  id?: string;
 }
 
 export const SET_GRAPH = "SET_GRAPH";
@@ -29,8 +30,11 @@ export function changeGraphAction(
 }
 
 export const SELECT_NODE = "SELECT_NODE";
-export function selectNodeAction(node: dagreD3.Node): HetsGuiActions {
-  return { type: SELECT_NODE, node: node };
+export function selectNodeAction(
+  node: dagreD3.Node,
+  id: string
+): HetsGuiActions {
+  return { type: SELECT_NODE, node: node, id: id };
 }
 
 export const SELECT_EDGE = "SELECT_EDGE";

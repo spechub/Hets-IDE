@@ -23,8 +23,8 @@ const mapStateToProps = (
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    onSelectNode: (node: dagreD3.Node) => {
-      dispatch(selectNodeAction(node));
+    onSelectNode: (node: dagreD3.Node, id: string) => {
+      dispatch(selectNodeAction(node, id));
     },
     onSelectEdge: (edge: dagreD3.GraphEdge) => {
       dispatch(selectEdgeAction(edge));
@@ -32,6 +32,9 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   };
 };
 
-const VisibleDagGraph = connect(mapStateToProps, mapDispatchToProps)(DagGraph);
+const VisibleDagGraph = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(DagGraph);
 
 export default VisibleDagGraph;

@@ -43,35 +43,54 @@ const edgeStyle = (e: DGLink): string => {
   return e.Type.includes("Unproven")
     ? "stroke: #e5647a; fill: none; stroke-width: 2px;"
     : e.Type.includes("Proven")
-      ? "stroke: #b8db95; fill: none; stroke-width: 2px;"
-      : e.Type.includes("Hiding")
-        ? "stroke: #6babef; fill: none; stroke-width: 2px;"
-        : e.Type.includes("HetDefInc")
-          ? "stroke: #a333c8; fill: none; stroke-dasharray: 5 2; stroke-width: 2px;"
-          : "stroke: #999; fill: none; stroke-width: 2px;";
+    ? "stroke: #b8db95; fill: none; stroke-width: 2px;"
+    : e.Type.includes("Hiding")
+    ? "stroke: #6babef; fill: none; stroke-width: 2px;"
+    : e.Type.includes("HetDefInc")
+    ? "stroke: #a333c8; fill: none; stroke-dasharray: 5 2; stroke-width: 2px;"
+    : "stroke: #999; fill: none; stroke-width: 2px;";
 };
 
 const arrowheadStyle = (e: DGLink): string => {
   return e.Type.includes("Unproven")
     ? "stroke: #e5647a; fill: #e5647a;"
     : e.Type.includes("Proven")
-      ? "stroke: #b8db95; fill: #b8db95;"
-      : e.Type.includes("Hiding")
-        ? "stroke: #6babef; fill: #6babef;"
-        : e.Type.includes("HetDefInc")
-          ? "stroke: #a333c8; fill: #a333c8;"
-          : "stroke: #999; fill: #999;";
+    ? "stroke: #b8db95; fill: #b8db95;"
+    : e.Type.includes("Hiding")
+    ? "stroke: #6babef; fill: #6babef;"
+    : e.Type.includes("HetDefInc")
+    ? "stroke: #a333c8; fill: #a333c8;"
+    : "stroke: #999; fill: #999;";
 };
 
 const nodeStyle = (n: DGNode): { style: string; shape: string } => {
   return {
     style:
       n.Theorems.length > 0
-        ? "fill: white; stroke: #e5647a; stroke-width: 3.5px;"
-        : "fill: white; stroke: #b8db95; stroke-width: 3.5px;",
+        ? `fill: ${
+            n.selected ? "#E8B0BA" : "white"
+          }; stroke: #e5647a; stroke-width: 3.5px;`
+        : `fill: ${
+            n.selected ? "#E8B0BA" : "white"
+          }; stroke: #b8db95; stroke-width: 3.5px;`,
     shape: n.reference ? "rect" : "ellipse"
   };
 };
+
+export function renderSelectedNode(
+  _node: dagreD3.Node,
+  id: string,
+  nodes: DGNode[],
+  edges: DGLink[]
+): dagreD3.graphlib.Graph {
+  nodes.forEach(node => {
+    if (node.selected) {
+      node.selected = false;
+    }
+  });
+  nodes.find(n => n.id === ~~id).selected = true;
+  return constructGraph(nodes, edges);
+}
 
 // TODO: optimize
 // maybe pre filter *proven edges

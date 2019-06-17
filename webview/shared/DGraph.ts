@@ -41,6 +41,7 @@ export interface DGNode {
   refname: string;
   relxpath: string;
   internal: boolean;
+  selected?: boolean;
 }
 
 export class DGNode {

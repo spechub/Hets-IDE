@@ -12,7 +12,7 @@ export type DagGraphProps = {
   width: number;
   height: number;
   graph: dagreD3.graphlib.Graph;
-  // onSelectNode: (node: dagreD3.Node) => void;
+  onSelectNode: (node: dagreD3.Node, id: string) => void;
   // onSelectEdge: (edge: dagreD3.GraphEdge) => void;
 };
 
@@ -66,6 +66,8 @@ export class DagGraph extends React.Component<DagGraphProps, {}> {
         command: "node-selected",
         text: `${node.label}`
       });
+
+      this.props.onSelectNode(node, v);
       d3.event.stopPropagation();
     });
 
