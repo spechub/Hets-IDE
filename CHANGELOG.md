@@ -16,3 +16,9 @@ All notable changes to the "Hets IDE" extension will be documented in this file.
 * Add settings to configure Hets commands.
 * Add loading indicator when fetching development graph.
 * Fix error when nothing needs to be proven.
+
+## 0.0.3
+
+* Highlight the selected node in the graph
+    * This is really rudimentary for now and only supports selecting nodes (no deselection etc.)
+* Support files in subfolders
