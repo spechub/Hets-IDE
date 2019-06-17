@@ -127,9 +127,16 @@ export function activate(context: vscode.ExtensionContext) {
         let textEditorPicks: vscode.QuickPickItem[] = [];
         vscode.window.visibleTextEditors.forEach(
           (editor: vscode.TextEditor) => {
-            textEditorPicks.push({
-              label: path.basename(editor.document.fileName),
-              detail: editor.document.fileName
+            vscode.workspace.workspaceFolders.forEach(wsfolder => {
+              const filepathWorkspace = editor.document.fileName.replace(
+                wsfolder.uri.fsPath,
+                ""
+              );
+
+              textEditorPicks.push({
+                label: filepathWorkspace,
+                detail: editor.document.fileName
+              });
             });
           }
         );
@@ -152,15 +159,15 @@ export function activate(context: vscode.ExtensionContext) {
         textEditor = vscode.window.visibleTextEditors[0];
       }
 
-      fileLoadedInPane = path.basename(textEditor.document.fileName);
+      fileLoadedInPane = textEditor.document.fileName;
+      vscode.workspace.workspaceFolders.forEach(wsfolder => {
+        fileLoadedInPane = textEditor.document.fileName.replace(
+          wsfolder.uri.fsPath,
+          ""
+        );
+      });
+
       panel.title = `Development Graph - ${fileLoadedInPane}`;
-
-      let filename: string;
-      const resource = textEditor.document.uri;
-
-      if (resource.scheme === "file") {
-        filename = path.basename(resource.fsPath);
-      }
 
       const config = vscode.workspace.getConfiguration("hets-ide");
 
@@ -177,7 +184,7 @@ export function activate(context: vscode.ExtensionContext) {
         },
         _progress => {
           return hetsInterface.getDecisionGraph(
-            `data/${filename}`,
+            `data/${fileLoadedInPane}`,
             config.get("prover.commands", "auto/full-theories/full-signatures")
           );
         }
