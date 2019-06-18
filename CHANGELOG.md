@@ -22,3 +22,7 @@ All notable changes to the "Hets IDE" extension will be documented in this file.
 * Highlight the selected node in the graph
     * This is really rudimentary for now and only supports selecting nodes (no deselection etc.)
 * Support files in subfolders
+
+## 0.0.4
+
+* Add basic syntax highlighting for `.dol` files

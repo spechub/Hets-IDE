@@ -20,7 +20,8 @@ The easiest way to achieve this is by using the Hets Docker container as describ
 Open a specification file that is supported by Hets and run the command: `Hets IDE: Load development graph for File`.
 A new pane will open showing the development graph of the selected file.
 
-To prove a node, simply select a node in the visible graph (the name will be shown on right side of the status bar) and run the command `Hets IDE: Prove selected Node`.
+To prove a node, simply select a node in the visible graph (the name will be shown on right side of the status bar) and run the command `Hets IDE: Prove selected Node`.  
+The command palette can be opened with `cmd/ctrl + shift + p`.  
 The extension will fetch all available provers which can take a while, a progress indicator is shown on the left side of the status bar. After selecting a prover from the list a new progress indicator is shown while Hets is communicating with the prover. The result is shown in an output panel that will automatically open after the prover finishes.
 
 ## Extension Settings
@@ -30,6 +31,10 @@ The timeout (in seconds) for the prover can also be set, default are 5 seconds. 
 
 
 ## Release Notes
+
+### 0.0.4
+
+* Add basic syntax highlighting for `.dol` files
 
 ### 0.0.3
 

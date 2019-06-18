@@ -1,0 +1,56 @@
+{
+  "scopeName": "source.dol",
+  "patterns": [
+    { "include": "#comment" },
+    { "include": "#spec-def" },
+    { "include": "#spec-def-equals" },
+    { "include": "#buildins" },
+    { "include": "#control" },
+    { "include": "#function" },
+    { "include": "#inline-comment" },
+    { "include": "#inline-function" }
+  ],
+  "repository": {
+    "control": {
+      "match": "\\b(along|assuming|and|closed\\-world|cofree|combine|entails|excluding|extract|free|hide|import|in|for|forget|keep|maximize|minimize|ni|of|refined|reject|relation|remove|result|reveal|select|separators|to|translation|using|vars|via|where|with)\\b",
+      "name": "keyword.control.dol"
+    },
+    "function": {
+      "begin": "\\%(cons|ccons|complete|consistent|def|implied|implies|inconsistent|mcons|mono|notccons|notmcons|prefix|wdef)",
+      "end": "\\n",
+      "name": "support.function.builtin.dol"
+    },
+    "buildins": {
+      "match": "\\b(alignment|cons\\-ext|entailment|equivalence|interpretation|library|logic|model|network|language|oms|onto|ontology|refinement|serialization|specification|substitution|syntax|view)\\b",
+      "name": "keyword.control.import.dol"
+    },
+    "spec-def": {
+      "match": "\\b(spec|then|end)\\b",
+      "name": "keyword.function.dol"
+    },
+    "spec-def-equals": {
+      "match": "\\s\\=\\n",
+      "name": "keyword.function.dol"
+    },
+    "inline-function": {
+      "begin": "\\%\\(",
+      "end": "\\)\\%",
+      "name": "support.function.builtin.dol"
+    },
+    "inline-comment": {
+      "begin": "\\%\\{",
+      "end": "\\}\\%",
+      "name": "comment.line.dol"
+    },
+    "comment": {
+      "begin": "%%",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.definition.comment.dol"
+        }
+      },
+      "end": "\\n",
+      "name": "comment.line.number-sign.dol"
+    }
+  }
+}

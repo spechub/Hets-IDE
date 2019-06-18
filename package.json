@@ -1,111 +1,126 @@
 {
-	"name": "hets-ide",
-	"publisher": "spechub",
-	"displayName": "Hets IDE",
-	"description": "Hets IDE can display the development graph of an opened specification file.",
-	"version": "0.0.3",
-	"icon": "resources/icon.png",
-	"keywords": [
-		"hets",
-		"dol",
-		"spechub",
-		"casl",
-		"owl"
-	],
-	"bugs": {
-		"url": "https://github.com/spechub/Hets-IDE/issues"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/spechub/Hets-IDE.git"
-	},
-	"homepage": "https://github.com/spechub/Hets-IDE",
-	"engines": {
-		"vscode": "^1.32.0"
-	},
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"*"
-	],
-	"main": "./dist/extension/extension.js",
-	"contributes": {
-		"commands": [
-			{
-				"command": "hets-ide.loadFile",
-				"title": "Hets IDE: Load development graph for File"
-			},
-			{
-				"command": "hets-ide.prove",
-				"title": "Hets IDE: Prove selected Node"
-			}
-		],
-		"configuration": {
-			"type": "object",
-			"title": "Hets-IDE",
-			"properties": {
-				"hets-ide.server.hostname": {
-					"type": "string",
-					"default": "localhost",
-					"description": "The hostname (or ip address) Hets is running on."
-				},
-				"hets-ide.server.port": {
-					"type": "number",
-					"default": 8000,
-					"description": "The port Hets is listening on."
-				},
-				"hets-ide.prover.timeout": {
-					"type": "number",
-					"default": 5,
-					"description": "The time until proving is stopped in seconds."
-				},
-				"hets-ide.prover.commands": {
-					"type": "string",
-					"default": "auto/full-theories/full-signatures",
-					"description": "Additional commands that can be applied to the graph."
-				}
-			}
-		}
-	},
-	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "npm run compile:extension && npm run compile:webview",
-		"compile:extension": "webpack --config webpack.config.js --mode production",
-		"compile:webview": "webpack --config webpack.webview.config.js --mode production",
-		"compile-dev": "npm run compile-dev:extension && npm run compile-dev:webview",
-		"compile-dev:extension": "webpack --config webpack.config.js --mode development",
-		"compile-dev:webview": "webpack --config webpack.webview.config.js --mode development",
-		"postinstall": "node ./node_modules/vscode/bin/install",
-		"test": "npm run compile && node ./node_modules/vscode/bin/test"
-	},
-	"devDependencies": {
-		"@types/d3": "^4.13.0",
-		"@types/dagre-d3": "^0.4.37",
-		"@types/mocha": "^2.2.42",
-		"@types/node": "^10.12.21",
-		"@types/react": "^16.3.14",
-		"@types/react-dom": "^16.0.5",
-		"@types/react-redux": "^6.0.0",
-		"@types/request": "^2.48.1",
-		"@types/request-promise-native": "^1.0.16",
-		"ts-loader": "^5.4.3",
-		"tslint": "^5.12.1",
-		"typescript": "^3.3.1",
-		"vscode": "^1.1.28",
-		"webpack": "^4.30.0",
-		"webpack-cli": "^3.3.1",
-		"vsce": "^1.63.0"
-	},
-	"dependencies": {
-		"d3": "^4.13.0",
-		"dagre": "^0.8.2",
-		"dagre-d3": "^0.6.1",
-		"react": "^16.3.2",
-		"react-dom": "^16.3.2",
-		"react-redux": "^5.0.7",
-		"redux": "^4.0.0",
-		"request": "^2.88.0",
-		"request-promise-native": "^1.0.7"
-	}
+  "name": "hets-ide",
+  "publisher": "spechub",
+  "displayName": "Hets IDE",
+  "description": "Hets IDE can display the development graph of an opened specification file.",
+  "version": "0.0.3",
+  "icon": "resources/icon.png",
+  "keywords": [
+    "hets",
+    "dol",
+    "spechub",
+    "casl",
+    "owl"
+  ],
+  "bugs": {
+    "url": "https://github.com/spechub/Hets-IDE/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/spechub/Hets-IDE.git"
+  },
+  "homepage": "https://github.com/spechub/Hets-IDE",
+  "engines": {
+    "vscode": "^1.32.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./dist/extension/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "hets-ide.loadFile",
+        "title": "Hets IDE: Load development graph for File"
+      },
+      {
+        "command": "hets-ide.prove",
+        "title": "Hets IDE: Prove selected Node"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Hets-IDE",
+      "properties": {
+        "hets-ide.server.hostname": {
+          "type": "string",
+          "default": "localhost",
+          "description": "The hostname (or ip address) Hets is running on."
+        },
+        "hets-ide.server.port": {
+          "type": "number",
+          "default": 8000,
+          "description": "The port Hets is listening on."
+        },
+        "hets-ide.prover.timeout": {
+          "type": "number",
+          "default": 5,
+          "description": "The time until proving is stopped in seconds."
+        },
+        "hets-ide.prover.commands": {
+          "type": "string",
+          "default": "auto/full-theories/full-signatures",
+          "description": "Additional commands that can be applied to the graph."
+        }
+      }
+    },
+    "languages": [
+      {
+        "id": "dol",
+        "extensions": [
+          ".dol"
+        ]
+      }
+    ],
+    "grammars": [
+      {
+        "language": "dol",
+        "scopeName": "source.dol",
+        "path": "./syntaxes/dol.tmGrammar.json"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "npm run compile:extension && npm run compile:webview",
+    "compile:extension": "webpack --config webpack.config.js --mode production",
+    "compile:webview": "webpack --config webpack.webview.config.js --mode production",
+    "compile-dev": "npm run compile-dev:extension && npm run compile-dev:webview",
+    "compile-dev:extension": "webpack --config webpack.config.js --mode development",
+    "compile-dev:webview": "webpack --config webpack.webview.config.js --mode development",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "test": "npm run compile && node ./node_modules/vscode/bin/test"
+  },
+  "devDependencies": {
+    "@types/d3": "^4.13.0",
+    "@types/dagre-d3": "^0.4.37",
+    "@types/mocha": "^2.2.42",
+    "@types/node": "^10.12.21",
+    "@types/react": "^16.3.14",
+    "@types/react-dom": "^16.0.5",
+    "@types/react-redux": "^6.0.0",
+    "@types/request": "^2.48.1",
+    "@types/request-promise-native": "^1.0.16",
+    "ts-loader": "^5.4.3",
+    "tslint": "^5.12.1",
+    "typescript": "^3.3.1",
+    "vscode": "^1.1.28",
+    "webpack": "^4.30.0",
+    "webpack-cli": "^3.3.1",
+    "vsce": "^1.63.0"
+  },
+  "dependencies": {
+    "d3": "^4.13.0",
+    "dagre": "^0.8.2",
+    "dagre-d3": "^0.6.1",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
+    "react-redux": "^5.0.7",
+    "redux": "^4.0.0",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.7"
+  }
 }
