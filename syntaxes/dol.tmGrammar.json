@@ -8,21 +8,49 @@
     { "include": "#control" },
     { "include": "#function" },
     { "include": "#inline-comment" },
-    { "include": "#inline-function" }
+    { "include": "#inline-function" },
+    { "include": "#other-commands" },
+    {"include": "#other-commands-version"},
+    { "include": "#function-other" },
+    { "include": "#function-other-end" },
+    {"include": "#imports"},
+    {"include": "#inline-comment-square"}
   ],
   "repository": {
     "control": {
       "match": "\\b(along|assuming|and|closed\\-world|cofree|combine|entails|excluding|extract|free|hide|import|in|for|forget|keep|maximize|minimize|ni|of|refined|reject|relation|remove|result|reveal|select|separators|to|translation|using|vars|via|where|with)\\b",
       "name": "keyword.control.dol"
     },
+    "imports": {
+      "match": "\\b(from|get)\\b",
+      "name": "keyword.control.import.dol"
+    },
     "function": {
-      "begin": "\\%(cons|ccons|complete|consistent|def|implied|implies|inconsistent|mcons|mono|notccons|notmcons|prefix|wdef)",
+      "begin": "\\%(cons|ccons|complete|consistent|def|implied|implies|inconsistent|mcons|mono|notccons|notmcons|prefix|wdef|simp)",
       "end": "\\n",
       "name": "support.function.builtin.dol"
     },
+    "other-commands": {
+      "begin": "\\%(authors|date)",
+      "end": "\\n",
+      "name": "comment.block.dol"
+    },
+    "other-commands-version": {
+      "begin": "\\b(version)\\b",
+      "end": "\\n",
+      "name": "comment.block.dol"
+    },
+    "function-other": {
+      "match": "\\%(\\w|_)+(\\()?",
+      "name": "support.function.builtin.dol"
+    },
+    "function-other-end": {
+      "match": "\\)\\%",
+      "name": "support.function.builtin.dol"
+    },
     "buildins": {
-      "match": "\\b(alignment|cons\\-ext|entailment|equivalence|interpretation|library|logic|model|network|language|oms|onto|ontology|refinement|serialization|specification|substitution|syntax|view)\\b",
-      "name": "keyword.control.import.dol"
+      "match": "\\b(alignment|cons\\-ext|entailment|equivalence|interpretation|library|logic|model|network|language|oms|onto|ontology|refinement|serialization|specification|substitution|syntax|view|local|within)\\b",
+      "name": "keyword.function.dol"
     },
     "spec-def": {
       "match": "\\b(spec|then|end)\\b",
@@ -40,7 +68,12 @@
     "inline-comment": {
       "begin": "\\%\\{",
       "end": "\\}\\%",
-      "name": "comment.line.dol"
+      "name": "comment.block.dol"
+    },
+    "inline-comment-square": {
+      "begin": "\\%\\[",
+      "end": "\\]\\%",
+      "name": "comment.block.dol"
     },
     "comment": {
       "begin": "%%",
