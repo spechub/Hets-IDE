@@ -41,6 +41,16 @@
         "title": "Hets IDE: Prove selected Node"
       }
     ],
+    "keybindings": [
+      {
+        "command": "hets-ide.loadFile",
+        "key": "ctrl+alt+g"
+      },
+      {
+        "command": "hets-ide.prove",
+        "key": "ctrl+alt+p"
+      }
+    ],
     "configuration": {
       "type": "object",
       "title": "Hets-IDE",
@@ -73,11 +83,33 @@
         "extensions": [
           ".dol"
         ]
+      },
+      {
+        "id": "casl",
+        "extensions": [
+          ".casl"
+        ]
+      },
+      {
+        "id": "het",
+        "extensions": [
+          ".het"
+        ]
       }
     ],
     "grammars": [
       {
         "language": "dol",
+        "scopeName": "source.dol",
+        "path": "./syntaxes/dol.tmGrammar.json"
+      },
+      {
+        "language": "casl",
+        "scopeName": "source.dol",
+        "path": "./syntaxes/dol.tmGrammar.json"
+      },
+      {
+        "language": "het",
         "scopeName": "source.dol",
         "path": "./syntaxes/dol.tmGrammar.json"
       }
