@@ -26,3 +26,9 @@ All notable changes to the "Hets IDE" extension will be documented in this file.
 ## 0.0.4
 
 * Add basic syntax highlighting for `.dol` files
+
+## 0.0.5
+
+* Improve syntax highlighting
+* Highlight `.casl` and `.het` files
+* Add default shortcuts to "show graph" and "prove" commands
