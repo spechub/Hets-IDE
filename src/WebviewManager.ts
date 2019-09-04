@@ -38,6 +38,11 @@ export function createWebview(context: vscode.ExtensionContext) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; img-src vscode-resource: https:; script-src vscode-resource:; style-src vscode-resource:;"
+    />
+
     <base href="${vscode.Uri.file(
       path.join(context.extensionPath, "dist", "webview")
     ).with({ scheme: "vscode-resource" })}/">
