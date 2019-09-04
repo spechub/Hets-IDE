@@ -166,6 +166,8 @@ export function activate(context: vscode.ExtensionContext) {
         );
       });
 
+      fileLoadedInPane = fileLoadedInPane.replace(/\\/g,"/");
+
       panel.title = `Development Graph - ${fileLoadedInPane}`;
 
       const config = vscode.workspace.getConfiguration("hets-ide");
