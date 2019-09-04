@@ -1,5 +1,4 @@
 import * as vscode from "vscode";
-import * as path from "path";
 
 import { HetsRESTInterface } from "./HetsRESTInterface";
 import {
@@ -196,6 +195,31 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(proveCommand);
   context.subscriptions.push(loadFileCommand);
+  vscode.tasks.registerTaskProvider(
+    "hets-server",
+    new HetsServerTaskProvider()
+  );
+}
+
+class HetsServerTaskProvider implements vscode.TaskProvider {
+  provideTasks(): vscode.ProviderResult<vscode.Task[]> {
+    const folder = vscode.workspace.workspaceFolders[0];
+    return [
+      new vscode.Task(
+        { type: "hets-server" },
+        vscode.TaskScope.Workspace,
+        "Start server",
+        "docker",
+        new vscode.ShellExecution(
+          `docker run --rm --name hets --mount type=bind,source="${folder.uri}",target=/data,readonly -p 8000:8000 -ti spechub2/hets`
+        )
+      )
+    ];
+  }
+
+  resolveTask(task: vscode.Task): vscode.ProviderResult<vscode.Task> {
+    return task;
+  }
 }
 
 export function deactivate() {}

@@ -113,6 +113,11 @@
         "scopeName": "source.dol",
         "path": "./syntaxes/dol.tmGrammar.json"
       }
+    ],
+    "taskDefinitions": [
+      {
+        "type": "hets-server"
+			}
     ]
   },
   "scripts": {
