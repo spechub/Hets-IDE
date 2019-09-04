@@ -40,7 +40,7 @@ export function createWebview(context: vscode.ExtensionContext) {
 
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'none'; img-src vscode-resource: https:; script-src vscode-resource:; style-src vscode-resource:;"
+      content="default-src 'none'; img-src vscode-resource: https:; script-src vscode-resource:; style-src 'unsafe-inline';"
     />
 
     <base href="${vscode.Uri.file(
