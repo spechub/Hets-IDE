@@ -166,7 +166,7 @@ export function activate(context: vscode.ExtensionContext) {
         );
       });
 
-      fileLoadedInPane = fileLoadedInPane.replace(/\\/g,"/");
+      fileLoadedInPane = fileLoadedInPane.replace(/\\/g, "/");
 
       panel.title = `Development Graph - ${fileLoadedInPane}`;
 
@@ -211,9 +211,9 @@ class HetsServerTaskProvider implements vscode.TaskProvider {
         { type: "hets-server" },
         vscode.TaskScope.Workspace,
         "Start server",
-        "docker",
+        "Hets",
         new vscode.ShellExecution(
-          `docker run --rm --name hets --mount type=bind,source="${folder.uri}",target=/data,readonly -p 8000:8000 -ti spechub2/hets`
+          `docker run --rm --name hets --mount type=bind,source="${folder.uri.fsPath}",target=/data,readonly -p 8000:8000 -ti spechub2/hets`
         )
       )
     ];
