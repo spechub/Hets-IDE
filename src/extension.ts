@@ -206,6 +206,7 @@ export function activate(context: vscode.ExtensionContext) {
 class HetsServerTaskProvider implements vscode.TaskProvider {
   provideTasks(): vscode.ProviderResult<vscode.Task[]> {
     const folder = vscode.workspace.workspaceFolders[0];
+    const config = vscode.workspace.getConfiguration("hets-ide");
     return [
       new vscode.Task(
         { type: "hets-server" },
@@ -213,7 +214,11 @@ class HetsServerTaskProvider implements vscode.TaskProvider {
         "Start server",
         "Hets",
         new vscode.ShellExecution(
-          `docker run --rm --name hets --mount type=bind,source="${folder.uri.fsPath}",target=/data,readonly -p 8000:8000 -ti spechub2/hets`
+          `docker run --rm --name hets --mount type=bind,source="${
+            folder.uri.fsPath
+          }",target=/data,readonly -p 8000:8000 -ti ${config.get(
+            "server.container-name"
+          )}`
         )
       )
     ];

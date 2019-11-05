@@ -65,6 +65,11 @@
           "default": 8000,
           "description": "The port Hets is listening on."
         },
+        "hets-ide.server.container-name": {
+          "type": "string",
+          "default": "spechub2/hets",
+          "description": "The name of the Docker container to be used when running the Hets server."
+        },
         "hets-ide.prover.timeout": {
           "type": "number",
           "default": 5,
