@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/spechub/Hets-IDE",
   "engines": {
-    "vscode": "^1.32.0"
+    "vscode": "^1.40.0"
   },
   "categories": [
     "Other"
@@ -122,7 +122,7 @@
     "taskDefinitions": [
       {
         "type": "hets-server"
-			}
+      }
     ]
   },
   "scripts": {
@@ -133,23 +133,20 @@
     "compile-dev": "npm run compile-dev:extension && npm run compile-dev:webview",
     "compile-dev:extension": "webpack --config webpack.config.js --mode development",
     "compile-dev:webview": "webpack --config webpack.webview.config.js --mode development",
-    "postinstall": "node ./node_modules/vscode/bin/install",
     "test": "npm run compile && node ./node_modules/vscode/bin/test"
   },
   "devDependencies": {
     "@types/d3": "^4.13.0",
     "@types/dagre-d3": "^0.4.37",
-    "@types/mocha": "^2.2.42",
-    "@types/node": "^10.12.21",
     "@types/react": "^16.3.14",
     "@types/react-dom": "^16.0.5",
     "@types/react-redux": "^6.0.0",
     "@types/request": "^2.48.1",
     "@types/request-promise-native": "^1.0.16",
+    "@types/vscode": "^1.40.0",
     "ts-loader": "^5.4.3",
     "tslint": "^5.12.1",
     "typescript": "^3.3.1",
-    "vscode": "^1.1.28",
     "webpack": "^4.30.0",
     "webpack-cli": "^3.3.1",
     "vsce": "^1.63.0"
