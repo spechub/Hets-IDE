@@ -30,7 +30,7 @@ export function createWebview(context: vscode.ExtensionContext) {
   const scriptPathOnDisk = vscode.Uri.file(
     path.join(context.extensionPath, "dist", "webview", "webview.js")
   );
-  const scriptUri = scriptPathOnDisk.with({ scheme: "vscode-resource" });
+  const scriptUri = panel.webview.asWebviewUri(scriptPathOnDisk);
 
   panel.webview.html = `<!DOCTYPE html>
   <html lang="en">
@@ -43,9 +43,9 @@ export function createWebview(context: vscode.ExtensionContext) {
       content="default-src 'none'; img-src vscode-resource: https:; script-src vscode-resource:; style-src 'unsafe-inline';"
     />
 
-    <base href="${vscode.Uri.file(
-      path.join(context.extensionPath, "dist", "webview")
-    ).with({ scheme: "vscode-resource" })}/">
+    <base href="${panel.webview.asWebviewUri(
+      vscode.Uri.file(path.join(context.extensionPath, "dist", "webview"))
+    )}/">
   </head>
   <body>
     <div id="content"></div>
