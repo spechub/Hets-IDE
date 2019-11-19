@@ -30,11 +30,47 @@ export function activate(context: vscode.ExtensionContext) {
         return;
       }
 
+      console.log(selectedNode);
+
       const config = vscode.workspace.getConfiguration("hets-ide");
       const hetsInterface = new HetsRESTInterface(
         config.get("server.hostname", "localhost"),
         config.get("server.port", 8000)
       );
+
+      const comorphisms = await vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Window,
+          title: `Fetching available comorphisms for node '${selectedNode}'!`,
+          cancellable: false
+        },
+        _progress => {
+          return hetsInterface.getComorphisms(
+            `data/${fileLoadedInPane}`,
+            selectedNode,
+            null
+          );
+        }
+      );
+
+      console.log(comorphisms);
+
+      let comorphPicks: vscode.QuickPickItem[] = [];
+      comorphisms["translations"].forEach(trans => {
+        comorphPicks.push({
+          label: trans
+        });
+      });
+
+      const comorphPick = await vscode.window.showQuickPick(comorphPicks, {
+        canPickMany: false
+      });
+
+      if (!comorphPick) {
+        return;
+      }
+
+      console.log(comorphPick);
 
       let provers: JSON;
       provers = await vscode.window.withProgress(
@@ -47,7 +83,8 @@ export function activate(context: vscode.ExtensionContext) {
           return hetsInterface.getProvers(
             `data/${fileLoadedInPane}`,
             null,
-            null
+            selectedNode,
+            comorphPick.label
           );
         }
       );
@@ -71,21 +108,24 @@ export function activate(context: vscode.ExtensionContext) {
       const proveResponse = await vscode.window.withProgress(
         {
           location: vscode.ProgressLocation.Window,
-          title: `Proving '${selectedNode} with prover '${proverPick.label}'!`,
+          title: `Proving '${selectedNode} with prover '${proverPick.label}' using '${comorphPick.label}'!`,
           cancellable: false
         },
         _progress => {
           return hetsInterface.prove(
             `data/${fileLoadedInPane}`,
-            config.get("prover.commands", "auto/full-theories/full-signatures"),
+            config.get("prover.commands"),
             selectedNode,
             proverPick.detail,
-            config.get("prover.timeout", 5)
+            config.get("prover.timeout"),
+            comorphPick.label
           );
         }
       );
 
       proverOutputChannel.clear();
+
+      console.log(proveResponse);
 
       if (typeof proveResponse === "string") {
         proverOutputChannel.append(proveResponse);

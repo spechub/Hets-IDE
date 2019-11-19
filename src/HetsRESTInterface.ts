@@ -62,20 +62,47 @@ export class HetsRESTInterface {
     }
   }
 
-  public async getProvers(
+  public async getComorphisms(
     filepath: string,
-    commandList: string | null,
-    node: string | null
+    node: string | null,
+    commandList: string | null
   ): Promise<JSON> {
     const escapedURL = querystring.escape("file:///" + filepath);
-
-    const nodePart = node !== null ? `&node=${node}` : "";
     const commandListPart = commandList !== null ? `/${commandList}` : "";
+    const nodePart = node !== null ? `&node=${node}` : "";
 
     const hetsApiOptions = {
       hostname: this.hostname,
       port: this.port,
-      path: `/provers/${escapedURL}${commandListPart}?format=json${nodePart}`
+      path: `/translations/${escapedURL}${commandListPart}?format=json${nodePart}`
+    };
+
+    try {
+      return await this.getJSON(hetsApiOptions);
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  public async getProvers(
+    filepath: string,
+    commandList: string | null,
+    node: string | null,
+    comorphism: string | null
+  ): Promise<JSON> {
+    const escapedURL = querystring.escape("file:///" + filepath);
+
+    const nodePart = node !== null ? `&node=${querystring.escape(node)}` : "";
+    const commandListPart = commandList !== null ? `/${commandList}` : "";
+    const comorphismPart =
+      comorphism !== null
+        ? `&translation=${querystring.escape(comorphism)}`
+        : "";
+
+    const hetsApiOptions = {
+      hostname: this.hostname,
+      port: this.port,
+      path: `/provers/${escapedURL}${commandListPart}?format=json${nodePart}${comorphismPart}`
     };
 
     console.log(hetsApiOptions);
@@ -90,24 +117,23 @@ export class HetsRESTInterface {
   public async prove(
     filepath: string,
     commandList: string | null,
-    node: string | null,
+    node: string,
     prover: string | null,
-    timeout: number
+    timeout: number,
+    comorphism: string
   ) {
     const escapedURL = querystring.escape("file:///" + filepath);
     const commandListPart = commandList !== null ? `/${commandList}` : "";
 
     const options: request.Options = {
-      url: `http://${this.hostname}:${
-        this.port
-      }/prove/${escapedURL}${commandListPart}`,
+      url: `http://${this.hostname}:${this.port}/prove/${escapedURL}${commandListPart}`,
       method: "POST",
       json: true,
       body: {
         format: "json",
         goals: [
           {
-            node: node,
+            node: querystring.escape(node),
             reasonerConfiguration: {
               timeLimit: timeout,
               reasoner: prover
